@@ -1,0 +1,46 @@
+### Проверка доступности сервиса
+GET http://localhost:8000/
+Accept: application/json
+
+
+### Создать задачу
+POST http://localhost:8000/tasks
+Content-Type: application/json
+
+
+### Получить список задач
+GET http://localhost:8000/tasks
+Accept: application/json
+
+
+### Обработать задачу (пример: id = 0)
+POST http://localhost:8000/tasks/0/process
+Content-Type: application/json
+
+
+### Обработать задачу (пример: id = 1)
+POST http://localhost:8000/tasks/1/process
+Content-Type: application/json
+
+
+### Проверка метрик Prometheus
+GET http://localhost:8000/metrics
+Accept: text/plain
+
+
+### Нагрузка (вручную дублировать несколько раз)
+POST http://localhost:8000/tasks
+Content-Type: application/json
+
+
+### Массовая проверка (создать несколько задач подряд)
+POST http://localhost:8000/tasks
+Content-Type: application/json
+
+###
+POST http://localhost:8000/tasks
+Content-Type: application/json
+
+###
+POST http://localhost:8000/tasks
+Content-Type: application/json
