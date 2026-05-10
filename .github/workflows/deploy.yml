@@ -1,0 +1,67 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      - ci-test
+  workflow_dispatch:
+
+jobs:
+  ci-check:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check Docker
+        run: |
+          docker --version
+          docker compose version
+
+      - name: Build containers
+        run: |
+          cd docker
+          docker compose build
+
+      - name: Start containers
+        run: |
+          cd docker
+          docker compose up -d
+
+      - name: Check application
+        run: |
+          sleep 5
+          curl -f http://localhost:8000/
+          curl -f http://localhost:8000/metrics
+
+      - name: Stop CI containers
+        if: always()
+        run: |
+          cd docker
+          docker compose down
+
+  deploy:
+    runs-on: self-hosted
+    needs: ci-check
+
+    steps:
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Test SSH connection
+        run: |
+          ssh -o StrictHostKeyChecking=no buben@192.168.122.95 'echo "SSH connection successful" && hostname && whoami'
+
+      - name: Deploy to VM
+        run: |
+          ssh -o StrictHostKeyChecking=no buben@192.168.122.95 '
+            cd /home/buben/lab4
+            git pull
+            cd docker
+            docker compose up -d --build
+          '
