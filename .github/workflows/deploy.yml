@@ -61,7 +61,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no buben@192.168.122.95 '
             cd /home/buben/lab4
-            git fecth
+            git fetch
             git checkout ${{ github.ref_name }}
             git pull origin ${{ github.ref_name }}
             cd docker
