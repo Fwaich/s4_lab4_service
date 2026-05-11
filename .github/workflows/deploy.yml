@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - ci-test
+      - workflow-test
   workflow_dispatch:
 
 jobs:
@@ -61,7 +61,9 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no buben@192.168.122.95 '
             cd /home/buben/lab4
-            git pull
+            git fecth
+            git checkout ${{ github.ref_name }}
+            git pull origin ${{ github.ref_name }}
             cd docker
             docker compose up -d --build
           '
